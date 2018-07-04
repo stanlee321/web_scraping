@@ -75,12 +75,12 @@ class PageBot(webdriver.PhantomJS):
                 avisos_text = (article.text)
 
                 file_name = avisos_text[:30].splitlines()[0].replace(' ', '_')
-                with open('data/{}/{}.csv'.format(grav_date, file_name), 'a') as f:
-                    f.write(avisos_text.encode('utf-8') + '\n')
+                with open('data/{}/{}.csv'.format(grav_date, file_name), 'wb') as f:
+                    f.write(avisos_text.encode('utf-8') + '\n'.encode('utf-8'))
                 self.back()
 
     def generate_date(self):
-        years = ["{0:04}".format(i) for i  in range(2010, 2019)]
+        years = ["{0:04}".format(i) for i  in range(2010, 2016)]
         months = ["{0:02}".format(i) for i in range(1, 13)]
         days = ["{0:02}".format(i) for i in range(1, 31)]
         return years, months, days
@@ -103,18 +103,16 @@ class PageBot(webdriver.PhantomJS):
             for possible in self.avisos_eco_path:
                 try:
                     possible_aviso = self.find_element_by_xpath(possible)
-                    print('possible avisos', possible_aviso.text)
                     if 'Avisos Econ' in possible_aviso.text:
                         self.avisos_eco_path_true = possible
                         break
                     else:
                         pass
                 except Exception as e:
-                    #print('Inner Exception as', e)
                     pass
             else:
                 pass
-            print('TRUE PATH',self.avisos_eco_path_true )
+            print('TRUE PATH', self.avisos_eco_path_true )
             self.find_element_by_xpath(self.avisos_eco_path_true).click()
             self.leer_articulos()
         except Exception as e:
@@ -124,56 +122,36 @@ class PageBot(webdriver.PhantomJS):
             self.save_screenshot("debug/debug_{}.png".format(base_url.split('=')[-1]))
 
 
-def feeder(url):
-    for u in url:
-        driver.feed_date(u)
-
-
-def run_parallel_selenium_processes(datalist, selenium_func):
-    pool = Pool()
-
+def create_batches(datalist):
     # max number of parallel process
     ITERATION_COUNT = cpu_count()-1
 
     count_per_iteration = len(datalist) / float(ITERATION_COUNT)
 
+    batchs = []
     for i in range(0, ITERATION_COUNT):
         list_start = int(count_per_iteration * i)
         list_end = int(count_per_iteration * (i+1))
-        pool.apply_async(selenium_func, [datalist[list_start:list_end]])
+        batchs.append(datalist[list_start:list_end])
+    return batchs
 
 
-
-def worker(queue):
-    while not queue.empty():
-        task_batch = queue.get()
-        for task in task_batch:
-            # now start to work on your task
-            feeder(task) # url, nlp, pixel can be unpacked from task
-
-def main(tasks):
-    queue = Queue()
-
-    ITERATION_COUNT = cpu_count()-1
-
-    count_per_iteration = len(tasks) / float(ITERATION_COUNT)
-
-    for i in range(0, ITERATION_COUNT):
-        list_start = int(count_per_iteration * i)
-        list_end = int(count_per_iteration * (i+1))
-        batch = [tasks[list_start: list_end]]
-        queue.put(batch)
-
-    # Now start all processes
-    process = Process(target=worker, args=(queue, ))
-    process.start()
-    #process.terminate()
-    #process.join()
+def run_process(url):
+    driver = PageBot()
+    driver.feed_date(url)
 
 
-if __name__ == '__main__':
+def main():
+    p = Pool(cpu_count() - 1)
     driver = PageBot()
     all_links = driver.create_dates()
-    #run_parallel_selenium_processes(all_links, feeder)
-    main(all_links)
-    print('DONE')
+    batches = create_batches(all_links)
+    for batch in batches:
+        p.map(run_process, batch)
+        p.close()
+        p.join()
+
+if __name__ == '__main__':
+
+    main()
+    print('WORK DONE')
