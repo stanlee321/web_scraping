@@ -4,6 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from multiprocessing import Pool, cpu_count
+from multiprocessing import Queue, Process
 
 import os
 dcap = dict(DesiredCapabilities.PHANTOMJS)
@@ -123,8 +124,7 @@ class PageBot(webdriver.PhantomJS):
 
 
 def feeder(url):
-    for u in url:
-        driver.feed_date(u)
+    driver.feed_date(url)
 
 
 def run_parallel_selenium_processes(datalist, selenium_func):
@@ -141,8 +141,37 @@ def run_parallel_selenium_processes(datalist, selenium_func):
         pool.apply_async(selenium_func, [datalist[list_start:list_end]])
 
 
+
+def worker(queue):
+    while not queue.empty():
+        task_batch = queue.get()
+        for task in task_batch:
+            # now start to work on your task
+            feeder(task) # url, nlp, pixel can be unpacked from task
+
+def main(tasks):
+    queue = Queue()
+
+    ITERATION_COUNT = cpu_count()-1
+
+    count_per_iteration = len(tasks) / float(ITERATION_COUNT)
+
+    for i in range(0, ITERATION_COUNT):
+        list_start = int(count_per_iteration * i)
+        list_end = int(count_per_iteration * (i+1))
+        batch = [tasks[list_start: list_end]]
+        queue.put(batch)
+
+    # Now start all processes
+    process = Process(target=worker, args=(queue, ))
+    process.start()
+    process.terminate()
+    process.join()
+
+
 if __name__ == '__main__':
     driver = PageBot()
     all_links = driver.create_dates()
-    run_parallel_selenium_processes(all_links, feeder)
+    #run_parallel_selenium_processes(all_links, feeder)
+    main(all_links)
     print('DONE')
