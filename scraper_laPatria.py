@@ -3,7 +3,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from multiprocessing import Pool
+from multiprocessing import Pool, cpu_count
 
 import os
 dcap = dict(DesiredCapabilities.PHANTOMJS)
@@ -126,9 +126,22 @@ def feeder(url):
     driver.feed_date(url)
 
 
+def run_parallel_selenium_processes(datalist, selenium_func):
+    pool = Pool()
+
+    # max number of parallel process
+    ITERATION_COUNT = cpu_count()-1
+
+    count_per_iteration = len(datalist) / float(ITERATION_COUNT)
+
+    for i in range(0, ITERATION_COUNT):
+        list_start = int(count_per_iteration * i)
+        list_end = int(count_per_iteration * (i+1))
+        pool.apply_async(selenium_func, [datalist[list_start:list_end]])
+
+
 if __name__ == '__main__':
     driver = PageBot()
     all_links = driver.create_dates()
-    with Pool(10) as p:
-        records = p.map(feeder, all_links)
+    run_parallel_selenium_processes(all_links, feeder)
     print('DONE')
