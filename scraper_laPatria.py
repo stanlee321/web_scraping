@@ -165,8 +165,8 @@ def main(tasks):
     # Now start all processes
     process = Process(target=worker, args=(queue, ))
     process.start()
-    process.terminate()
-    process.join()
+    #process.terminate()
+    #process.join()
 
 
 if __name__ == '__main__':
