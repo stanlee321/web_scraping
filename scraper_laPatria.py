@@ -124,7 +124,8 @@ class PageBot(webdriver.PhantomJS):
 
 
 def feeder(url):
-    driver.feed_date(url)
+    for u in url:
+        driver.feed_date(u)
 
 
 def run_parallel_selenium_processes(datalist, selenium_func):
