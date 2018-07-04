@@ -82,7 +82,7 @@ class PageBot(webdriver.PhantomJS):
         months = ["{0:02}".format(i) for i in range(1, 13)]
         days = ["{0:02}".format(i) for i in range(1, 31)]
         return years, months, days
-    
+
     def create_dates(self):
         all_dates = []
         y, m, d = self.generate_date()
@@ -122,8 +122,13 @@ class PageBot(webdriver.PhantomJS):
             self.save_screenshot("debug/debug_{}.png".format(base_url.split('=')[-1]))
 
 
+def feeder(url):
+    driver.feed_date(url)
+
+
 if __name__ == '__main__':
     driver = PageBot()
     all_links = driver.create_dates()
     with Pool(10) as p:
-        records = p.map(driver.feed_date, all_links)
+        records = p.map(feeder, all_links)
+    print('DONE')
