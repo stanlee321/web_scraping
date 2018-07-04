@@ -72,10 +72,11 @@ class PageBot(webdriver.PhantomJS):
                 article_box = self.find_element_by_id(_article_id)
                 article = article_box.find_element_by_class_name(_article_class)
 
-                avisos_text = article.text
-                file_name =  avisos_text[:30].splitlines()[0].replace(' ', '_')
+                avisos_text = (article.text)
+
+                file_name = avisos_text[:30].splitlines()[0].replace(' ', '_')
                 with open('data/{}/{}.csv'.format(grav_date, file_name), 'a') as f:
-                    f.write(avisos_text + '\n')
+                    f.write(avisos_text.encode('utf-8') + '\n')
                 self.back()
 
     def generate_date(self):
