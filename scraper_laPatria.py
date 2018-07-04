@@ -123,7 +123,8 @@ class PageBot(webdriver.PhantomJS):
 
 
 def feeder(url):
-    driver.feed_date(url)
+    for u in url:
+        driver.feed_date(u)
 
 
 def run_parallel_selenium_processes(datalist, selenium_func):
@@ -137,7 +138,7 @@ def run_parallel_selenium_processes(datalist, selenium_func):
     for i in range(0, ITERATION_COUNT):
         list_start = int(count_per_iteration * i)
         list_end = int(count_per_iteration * (i+1))
-        pool.apply_async(selenium_func, datalist[list_start:list_end])
+        pool.apply_async(selenium_func, [datalist[list_start:list_end]])
 
 
 if __name__ == '__main__':
