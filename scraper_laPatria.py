@@ -80,7 +80,7 @@ class PageBot(webdriver.PhantomJS):
                 self.back()
 
     def generate_date(self):
-        years = ["{0:04}".format(i) for i  in range(2010, 2016)]
+        years = ["{0:04}".format(i) for i  in range(2013, 2016)]
         months = ["{0:02}".format(i) for i in range(1, 13)]
         days = ["{0:02}".format(i) for i in range(1, 31)]
         return years, months, days
