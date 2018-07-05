@@ -147,7 +147,7 @@ def main():
     batches = create_batches(all_links)
     with Pool(cpu_count() - 1) as p:
         for batch in batches:
-        	try:
+            try:
                p.map(run_process, batch)
                p.close()
                p.join()
