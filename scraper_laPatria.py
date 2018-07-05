@@ -142,14 +142,14 @@ def run_process(url):
 
 
 def main():
-    p = Pool(cpu_count() - 1)
     driver = PageBot()
     all_links = driver.create_dates()
     batches = create_batches(all_links)
-    for batch in batches:
-        p.map(run_process, batch)
-        p.close()
-        p.join()
+    with Pool(cpu_count() - 1) as p:
+        for batch in batches:
+            p.map(run_process, batch)
+            p.close()
+            p.join()
 
 if __name__ == '__main__':
 
