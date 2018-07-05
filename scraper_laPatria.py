@@ -72,7 +72,7 @@ class PageBot(webdriver.PhantomJS):
                 article_box = self.find_element_by_id(_article_id)
                 article = article_box.find_element_by_class_name(_article_class)
 
-                avisos_text = (article.text)
+                avisos_text = article.text
 
                 file_name = avisos_text[:30].splitlines()[0].replace(' ', '_')
                 with open('data/{}/{}.csv'.format(grav_date, file_name), 'wb') as f:
@@ -147,9 +147,12 @@ def main():
     batches = create_batches(all_links)
     with Pool(cpu_count() - 1) as p:
         for batch in batches:
-            p.map(run_process, batch)
-            p.close()
-            p.join()
+        	try:
+               p.map(run_process, batch)
+               p.close()
+               p.join()
+            except Exception as e:
+               print(e)
 
 if __name__ == '__main__':
 
