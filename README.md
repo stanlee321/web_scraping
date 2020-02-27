@@ -14,6 +14,24 @@ Is posible also to download information from all the aviable sections in the web
 The target newspaper page:
 
 
+## Requirements:
+
+* Python 3.6 >
+* Selenium web driver
+  
+## How to run:
+
+For single thread 
+```
+$ python scraper_laPatria.py
+```
+
+For multi thread 
+```
+$ python scraper_laPatria_multipro.py
+```
+
+
 
  [http://lapatriaenlinea.com/!](http://lapatriaenlinea.com/).
 
