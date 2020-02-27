@@ -1,1 +1,5 @@
 dataset/
+/data
+/debug
+*.log
+*.out
