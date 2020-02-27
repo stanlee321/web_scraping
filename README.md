@@ -14,6 +14,11 @@ Is posible also to download information from all the aviable sections in the web
 The target newspaper page:
 
 
+ [http://lapatriaenlinea.com/!](http://lapatriaenlinea.com/).
+
+<div style="text-align:center"><img src ="https://github.com/stanlee321/web_scraping/blob/master/images/newspaper.png" /></div>
+
+
 ## Requirements:
 
 * Python 3.6 >
@@ -32,12 +37,7 @@ $ python scraper_laPatria_multipro.py
 ```
 
 
-
- [http://lapatriaenlinea.com/!](http://lapatriaenlinea.com/).
-
-<div style="text-align:center"><img src ="https://github.com/stanlee321/web_scraping/blob/master/images/newspaper.png" /></div>
-
-
+This outputs a  .csv file into the folder `data/` with the extracted information.
 
 
 
