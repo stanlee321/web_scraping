@@ -8,7 +8,7 @@ The scraper just downloads the information from the "Ads" section.
 Is posible also to download information from all the aviable sections in the webpage.
 
 
-<div style="text-align:center"><img src =https://github.com/stanlee321/web_scraping/tree/master/images/newspaper.png" /></div>
+<div style="text-align:center"><img src ="https://github.com/stanlee321/web_scraping/tree/master/images/newspaper.png" /></div>
 
 
 
@@ -18,4 +18,4 @@ Is posible also to download information from all the aviable sections in the web
 
 The android app shows the actual extracted information form the newspaper. 
 
-<div style="text-align:center"><img src =https://github.com/stanlee321/web_scraping/tree/master/images/android.png" /></div>
+<div style="text-align:center"><img src ="https://github.com/stanlee321/web_scraping/tree/master/images/android.png" /></div>
